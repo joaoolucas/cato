@@ -1,0 +1,152 @@
+{
+  "description": "OP_CAT opcode test vectors - Bitcoin Script compatible",
+  "note": "These vectors would produce identical results on a Bitcoin node with OP_CAT enabled (pre-2010 or future re-enablement)",
+  "tests": [
+    {
+      "name": "cat_basic_hello_world",
+      "description": "Concatenate 'hello' and 'world' to produce 'helloworld'",
+      "initial_stack": [
+        "68656c6c6f",
+        "776f726c64"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "68656c6c6f776f726c64"
+      ],
+      "comment": "0x68656c6c6f = 'hello', 0x776f726c64 = 'world'"
+    },
+    {
+      "name": "cat_empty_left",
+      "description": "Concatenate empty string with 'abc'",
+      "initial_stack": [
+        "",
+        "616263"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "616263"
+      ],
+      "comment": "Empty + 'abc' = 'abc'"
+    },
+    {
+      "name": "cat_empty_right",
+      "description": "Concatenate 'abc' with empty string",
+      "initial_stack": [
+        "616263",
+        ""
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "616263"
+      ],
+      "comment": "'abc' + Empty = 'abc'"
+    },
+    {
+      "name": "cat_both_empty",
+      "description": "Concatenate two empty strings",
+      "initial_stack": [
+        "",
+        ""
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        ""
+      ]
+    },
+    {
+      "name": "cat_single_bytes",
+      "description": "Concatenate single bytes 0x01 and 0x02",
+      "initial_stack": [
+        "01",
+        "02"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "0102"
+      ]
+    },
+    {
+      "name": "cat_binary_data",
+      "description": "Concatenate arbitrary binary data including null bytes",
+      "initial_stack": [
+        "00ff00",
+        "ff00ff"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "00ff00ff00ff"
+      ]
+    },
+    {
+      "name": "cat_triple_concat",
+      "description": "Three concatenations: 'a' + 'b' + 'c' + 'd'",
+      "initial_stack": [
+        "61",
+        "62",
+        "63",
+        "64"
+      ],
+      "script": "7e7e7e",
+      "expected_final_stack": [
+        "61626364"
+      ],
+      "comment": "Stack order: bottom['a','b','c','d']top. First CAT: 'c'+'d'='cd'. Second: 'b'+'cd'='bcd'. Third: 'a'+'bcd'='abcd'"
+    },
+    {
+      "name": "cat_with_dup",
+      "description": "DUP then CAT to double a string",
+      "initial_stack": [
+        "414243"
+      ],
+      "script": "767e",
+      "expected_final_stack": [
+        "414243414243"
+      ],
+      "comment": "DUP 'ABC', then CAT produces 'ABCABC'"
+    },
+    {
+      "name": "cat_max_element_size",
+      "description": "Concatenate two 260-byte elements to get 520-byte result (max allowed)",
+      "initial_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00010203",
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00010203"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00010203000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00010203"
+      ],
+      "comment": "Two 260-byte elements concatenate to exactly 520 bytes (Bitcoin max element size)"
+    },
+    {
+      "name": "cat_underflow_empty_stack",
+      "description": "OP_CAT with empty stack should fail",
+      "initial_stack": [],
+      "script": "7e",
+      "expected_error": "StackUnderflow"
+    },
+    {
+      "name": "cat_underflow_one_element",
+      "description": "OP_CAT with only one element should fail",
+      "initial_stack": [
+        "deadbeef"
+      ],
+      "script": "7e",
+      "expected_error": "StackUnderflow"
+    },
+    {
+      "name": "cat_preserves_other_stack",
+      "description": "CAT should not affect elements below the top two",
+      "initial_stack": [
+        "aabbcc",
+        "1122",
+        "3344"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "aabbcc",
+        "11223344"
+      ],
+      "comment": "Bottom element 'aabbcc' is preserved"
+    }
+  ]
+}

@@ -4,3 +4,9 @@ pub mod covenant;
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod test_vectors;
+
+#[cfg(test)]
+mod test_fuzzing;

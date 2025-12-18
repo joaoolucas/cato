@@ -1,0 +1,143 @@
+{
+  "description": "OP_ADD opcode test vectors - Bitcoin Script compatible",
+  "note": "Bitcoin uses little-endian signed magnitude encoding for script numbers",
+  "tests": [
+    {
+      "name": "add_small_positives",
+      "description": "2 + 3 = 5",
+      "initial_stack": [
+        "02",
+        "03"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "05"
+      ]
+    },
+    {
+      "name": "add_zero_left",
+      "description": "0 + 42 = 42",
+      "initial_stack": [
+        "",
+        "2a"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "2a"
+      ],
+      "comment": "Empty byte array represents zero in Bitcoin Script"
+    },
+    {
+      "name": "add_zero_right",
+      "description": "42 + 0 = 42",
+      "initial_stack": [
+        "2a",
+        ""
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "2a"
+      ]
+    },
+    {
+      "name": "add_both_zero",
+      "description": "0 + 0 = 0",
+      "initial_stack": [
+        "",
+        ""
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        ""
+      ]
+    },
+    {
+      "name": "add_negative_positive",
+      "description": "-5 + 10 = 5",
+      "initial_stack": [
+        "85",
+        "0a"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "05"
+      ],
+      "comment": "0x85 = -5 in signed magnitude (5 with high bit set)"
+    },
+    {
+      "name": "add_two_negatives",
+      "description": "-3 + -7 = -10",
+      "initial_stack": [
+        "83",
+        "87"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "8a"
+      ],
+      "comment": "0x83 = -3, 0x87 = -7, 0x8a = -10"
+    },
+    {
+      "name": "add_cancel_to_zero",
+      "description": "5 + -5 = 0",
+      "initial_stack": [
+        "05",
+        "85"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        ""
+      ],
+      "comment": "Result is zero, encoded as empty"
+    },
+    {
+      "name": "add_127",
+      "description": "127 + 1 = 128",
+      "initial_stack": [
+        "7f",
+        "01"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "8000"
+      ],
+      "comment": "128 requires 2 bytes: 0x80 0x00 (little-endian with sign byte)"
+    },
+    {
+      "name": "add_large_numbers",
+      "description": "256 + 256 = 512",
+      "initial_stack": [
+        "0001",
+        "0001"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "0002"
+      ],
+      "comment": "256 in little-endian is 0x00 0x01"
+    },
+    {
+      "name": "add_underflow",
+      "description": "OP_ADD with only one element fails",
+      "initial_stack": [
+        "05"
+      ],
+      "script": "93",
+      "expected_error": "StackUnderflow"
+    },
+    {
+      "name": "add_preserves_stack",
+      "description": "ADD should not affect elements below top two",
+      "initial_stack": [
+        "ff",
+        "02",
+        "03"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "ff",
+        "05"
+      ]
+    }
+  ]
+}
