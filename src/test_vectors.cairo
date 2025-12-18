@@ -10,7 +10,7 @@
 /// - expected_error: Expected error type (if script should fail)
 
 use crate::vm::{ScriptVMTrait, VMError};
-use crate::opcodes::{OP_PUSH, OP_ADD, OP_CAT, OP_DUP, OP_VERIFY};
+use crate::opcodes::{OP_ADD, OP_CAT, OP_DUP, OP_VERIFY};
 
 /// Helper to create ByteArray from bytes
 fn bytes_to_bytearray(bytes: Span<u8>) -> ByteArray {
@@ -284,10 +284,10 @@ fn test_vector_add_127_plus_1() {
 #[test]
 fn test_vector_push_cat_basic() {
     // Script: PUSH 'AB' PUSH 'CD' CAT
-    // 00 02 41 42 00 02 43 44 7e
+    // 02 41 42 02 43 44 7e
     let script: Array<u8> = array![
-        OP_PUSH, 0x02, 0x41, 0x42,  // PUSH "AB"
-        OP_PUSH, 0x02, 0x43, 0x44,  // PUSH "CD"
+        0x02, 0x41, 0x42,  // PUSH_2 "AB"
+        0x02, 0x43, 0x44,  // PUSH_2 "CD"
         OP_CAT
     ];
 
@@ -302,7 +302,7 @@ fn test_vector_push_cat_basic() {
 fn test_vector_dup_cat_double() {
     // Script: PUSH 'XY' DUP CAT = 'XYXY'
     let script: Array<u8> = array![
-        OP_PUSH, 0x02, 0x58, 0x59,  // PUSH "XY"
+        0x02, 0x58, 0x59,  // PUSH_2 "XY"
         OP_DUP,
         OP_CAT
     ];
@@ -321,7 +321,7 @@ fn test_vector_cat_with_pushed_data() {
     stack.append(bytes_to_bytearray(array![0xca, 0xfe].span()));
 
     let script: Array<u8> = array![
-        OP_PUSH, 0x02, 0xba, 0xbe,
+        0x02, 0xba, 0xbe,  // PUSH_2 0xbabe
         OP_CAT
     ];
 

@@ -9,7 +9,7 @@
 /// Generated from: test_vectors/bitcoin_ground_truth.json
 
 use crate::vm::{ScriptVMTrait, VMError};
-use crate::opcodes::{OP_PUSH, OP_ADD, OP_CAT, OP_DUP, OP_VERIFY};
+use crate::opcodes::{OP_ADD, OP_CAT, OP_DUP, OP_VERIFY};
 
 /// Helper to create ByteArray from bytes
 fn bytes_to_bytearray(bytes: Span<u8>) -> ByteArray {
@@ -463,13 +463,13 @@ fn test_btc_add_256_plus_256() {
 // ============================================
 
 /// script_push_cat: PUSH 'AB' PUSH 'CD' CAT
-/// Bitcoin script: 00024142000243447e -> expected: 41424344
+/// Bitcoin script: 024142024344 7e -> expected: 41424344
 #[test]
 fn test_btc_script_push_cat() {
-    // Script: OP_PUSH len(2) 'A''B' OP_PUSH len(2) 'C''D' OP_CAT
+    // Script: PUSH_2 'A''B' PUSH_2 'C''D' OP_CAT
     let script: Array<u8> = array![
-        OP_PUSH, 0x02, 0x41, 0x42, // PUSH "AB"
-        OP_PUSH, 0x02, 0x43, 0x44, // PUSH "CD"
+        0x02, 0x41, 0x42, // PUSH_2 "AB"
+        0x02, 0x43, 0x44, // PUSH_2 "CD"
         OP_CAT
     ];
 

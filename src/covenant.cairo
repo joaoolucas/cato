@@ -91,16 +91,32 @@ pub impl CovenantBuilderImpl of CovenantBuilderTrait {
         CovenantBuilder { script: ArrayTrait::new() }
     }
 
-    /// Add OP_PUSH with data
+    /// Add push data using Bitcoin standard opcodes
+    /// Uses direct push (0x01-0x4b) for data up to 75 bytes
+    /// Uses PUSHDATA1 (0x4c) for data 76-255 bytes
     fn push_data(ref self: CovenantBuilder, data: ByteArray) -> () {
-        use crate::opcodes::OP_PUSH;
-        self.script.append(OP_PUSH);
-        self.script.append(data.len().try_into().unwrap());
-        let mut i: usize = 0;
-        while i < data.len() {
-            self.script.append(data.at(i).unwrap());
-            i += 1;
-        };
+        let len: u32 = data.len();
+        if len == 0 {
+            // OP_0 / OP_FALSE for empty data
+            self.script.append(0x00);
+        } else if len <= 75 {
+            // Direct push: opcode is the length itself (0x01-0x4b)
+            self.script.append(len.try_into().unwrap());
+            let mut i: usize = 0;
+            while i < data.len() {
+                self.script.append(data.at(i).unwrap());
+                i += 1;
+            };
+        } else {
+            // PUSHDATA1 for data 76-255 bytes
+            self.script.append(0x4c);  // OP_PUSHDATA1
+            self.script.append(len.try_into().unwrap());
+            let mut i: usize = 0;
+            while i < data.len() {
+                self.script.append(data.at(i).unwrap());
+                i += 1;
+            };
+        }
     }
 
     /// Add OP_CAT

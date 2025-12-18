@@ -4,7 +4,7 @@
 
 use crate::vm::{ScriptVMTrait, VMError, decode_script_num, encode_script_num, is_truthy};
 use crate::covenant::{CovenantTrait, CovenantBuilderTrait};
-use crate::opcodes::{OP_PUSH, OP_ADD, OP_CAT, OP_DUP, OP_DROP, OP_EQUAL, OP_VERIFY};
+use crate::opcodes::{OP_ADD, OP_CAT, OP_DUP, OP_DROP, OP_EQUAL, OP_VERIFY, OP_0};
 
 // ============================================
 // OP_CAT Tests
@@ -16,9 +16,9 @@ fn test_op_cat_concatenation() {
     // Expected result: "helloworld" on stack
 
     let bytecode: Array<u8> = array![
-        OP_PUSH, 5, 'h', 'e', 'l', 'l', 'o',     // PUSH "hello"
-        OP_PUSH, 5, 'w', 'o', 'r', 'l', 'd',     // PUSH "world"
-        OP_CAT                                    // OP_CAT
+        0x05, 'h', 'e', 'l', 'l', 'o',     // PUSH_5 "hello"
+        0x05, 'w', 'o', 'r', 'l', 'd',     // PUSH_5 "world"
+        OP_CAT                              // OP_CAT
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -48,9 +48,9 @@ fn test_op_cat_empty_strings() {
     // Expected: empty string on stack
 
     let bytecode: Array<u8> = array![
-        OP_PUSH, 0,     // PUSH ""
-        OP_PUSH, 0,     // PUSH ""
-        OP_CAT          // OP_CAT
+        OP_0,     // PUSH ""
+        OP_0,     // PUSH ""
+        OP_CAT    // OP_CAT
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -67,7 +67,7 @@ fn test_op_cat_underflow() {
     // Expected: StackUnderflow error
 
     let bytecode: Array<u8> = array![
-        OP_PUSH, 5, 'h', 'e', 'l', 'l', 'o',
+        0x05, 'h', 'e', 'l', 'l', 'o',  // PUSH_5 "hello"
         OP_CAT
     ];
 
@@ -89,9 +89,9 @@ fn test_op_add_positive_numbers() {
 
     // Encode numbers as script nums (little-endian)
     let bytecode: Array<u8> = array![
-        OP_PUSH, 1, 2,      // PUSH 2
-        OP_PUSH, 1, 3,      // PUSH 3
-        OP_ADD              // OP_ADD
+        0x01, 2,      // PUSH_1 2
+        0x01, 3,      // PUSH_1 3
+        OP_ADD        // OP_ADD
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -110,9 +110,9 @@ fn test_op_add_with_zero() {
     // Expected: 42 on stack
 
     let bytecode: Array<u8> = array![
-        OP_PUSH, 1, 42,     // PUSH 42
-        OP_PUSH, 0,         // PUSH 0 (empty = 0)
-        OP_ADD              // OP_ADD
+        0x01, 42,     // PUSH_1 42
+        OP_0,         // PUSH 0 (empty = 0)
+        OP_ADD        // OP_ADD
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -131,9 +131,9 @@ fn test_op_add_negative_numbers() {
     // -5 in script num format: 0x85 (5 with sign bit set in same byte)
 
     let bytecode: Array<u8> = array![
-        OP_PUSH, 1, 0x85,   // PUSH -5
-        OP_PUSH, 1, 10,     // PUSH 10
-        OP_ADD              // OP_ADD
+        0x01, 0x85,   // PUSH_1 -5
+        0x01, 10,     // PUSH_1 10
+        OP_ADD        // OP_ADD
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -146,13 +146,13 @@ fn test_op_add_negative_numbers() {
 }
 
 // ============================================
-// OP_PUSH Tests
+// Direct Push Tests (0x01-0x4b)
 // ============================================
 
 #[test]
 fn test_op_push_basic() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 3, 'a', 'b', 'c'
+        0x03, 'a', 'b', 'c'  // PUSH_3 "abc"
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -166,8 +166,8 @@ fn test_op_push_basic() {
 #[test]
 fn test_op_push_multiple() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 1, 'x',
-        OP_PUSH, 2, 'y', 'z'
+        0x01, 'x',      // PUSH_1 "x"
+        0x02, 'y', 'z'  // PUSH_2 "yz"
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -184,7 +184,7 @@ fn test_op_push_multiple() {
 #[test]
 fn test_op_dup() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 3, 'f', 'o', 'o',
+        0x03, 'f', 'o', 'o',  // PUSH_3 "foo"
         OP_DUP
     ];
 
@@ -207,8 +207,8 @@ fn test_op_dup() {
 #[test]
 fn test_op_drop() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 1, 'a',
-        OP_PUSH, 1, 'b',
+        0x01, 'a',  // PUSH_1 "a"
+        0x01, 'b',  // PUSH_1 "b"
         OP_DROP
     ];
 
@@ -226,8 +226,8 @@ fn test_op_drop() {
 #[test]
 fn test_op_equal_same() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 3, 'a', 'b', 'c',
-        OP_PUSH, 3, 'a', 'b', 'c',
+        0x03, 'a', 'b', 'c',  // PUSH_3 "abc"
+        0x03, 'a', 'b', 'c',  // PUSH_3 "abc"
         OP_EQUAL
     ];
 
@@ -244,8 +244,8 @@ fn test_op_equal_same() {
 #[test]
 fn test_op_equal_different() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 3, 'a', 'b', 'c',
-        OP_PUSH, 3, 'x', 'y', 'z',
+        0x03, 'a', 'b', 'c',  // PUSH_3 "abc"
+        0x03, 'x', 'y', 'z',  // PUSH_3 "xyz"
         OP_EQUAL
     ];
 
@@ -265,9 +265,9 @@ fn test_op_equal_different() {
 #[test]
 fn test_op_verify_truthy() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 1, 1,      // Push truthy value
+        0x01, 1,      // PUSH_1 truthy value
         OP_VERIFY,
-        OP_PUSH, 1, 42      // Push final result
+        0x01, 42      // PUSH_1 final result
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -280,8 +280,8 @@ fn test_op_verify_truthy() {
 #[test]
 fn test_op_verify_falsy() {
     let bytecode: Array<u8> = array![
-        OP_PUSH, 0,         // Push empty (falsy)
-        OP_VERIFY           // Should fail
+        OP_0,         // Push empty (falsy)
+        OP_VERIFY     // Should fail
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -403,7 +403,7 @@ fn test_covenant_with_input_data() {
 #[test]
 fn test_covenant_verification_failure() {
     // Create a covenant that pushes empty (falsy) result
-    let script: Array<u8> = array![OP_PUSH, 0];
+    let script: Array<u8> = array![OP_0];  // Push empty (falsy)
     let covenant = CovenantTrait::new(script);
 
     let input: Array<ByteArray> = array![];
@@ -416,8 +416,8 @@ fn test_covenant_verification_failure() {
 fn test_covenant_multiple_stack_elements() {
     // Create a covenant that leaves two elements on stack (should fail)
     let script: Array<u8> = array![
-        OP_PUSH, 1, 'a',
-        OP_PUSH, 1, 'b'
+        0x01, 'a',  // PUSH_1 "a"
+        0x01, 'b'   // PUSH_1 "b"
     ];
     let covenant = CovenantTrait::new(script);
 
@@ -452,11 +452,11 @@ fn test_dup_equal_verify_pattern() {
     // Tests: push, duplicate, compare equal (should be 1), verify, push final 1
 
     let bytecode: Array<u8> = array![
-        OP_PUSH, 4, 't', 'e', 's', 't',
+        0x04, 't', 'e', 's', 't',  // PUSH_4 "test"
         OP_DUP,
         OP_EQUAL,
         OP_VERIFY,
-        OP_PUSH, 1, 1
+        0x01, 1  // PUSH_1 1
     ];
 
     let mut vm = ScriptVMTrait::new(bytecode);
@@ -483,8 +483,8 @@ fn test_invalid_opcode() {
 
 #[test]
 fn test_push_invalid_length() {
-    // PUSH with length that exceeds remaining bytecode
-    let bytecode: Array<u8> = array![OP_PUSH, 100];  // Says 100 bytes but none follow
+    // Direct push opcode with length that exceeds remaining bytecode
+    let bytecode: Array<u8> = array![0x20];  // PUSH_32 but no data follows
 
     let mut vm = ScriptVMTrait::new(bytecode);
     let result = vm.execute();
