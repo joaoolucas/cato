@@ -1,15 +1,15 @@
-# Cato
+# Cato 🐱
 
 **A STARK-provable Bitcoin Script VM with OP_CAT support.**
 
-Cato executes Bitcoin Script in Cairo and generates STARK proofs verifiable on Starknet. This enables trustless Bitcoin covenants and cross-chain state verification.
+Cato executes Bitcoin Script in Cairo and generates cryptographic proofs using Circle STARKs. This enables verifiable Bitcoin covenant execution and OP_CAT research.
 
 ## Features
 
 - **Bitcoin Script VM** - 80+ opcodes including arithmetic, crypto, stack, and flow control
 - **OP_CAT** - Native concatenation opcode for covenant patterns
-- **Circle STARKs** - Proof generation in ~7 seconds via Stwo
-- **On-Chain Verification** - Proofs verifiable on Starknet
+- **Circle STARKs** - Proof generation in ~8 seconds via Stwo
+- **Verifiable Execution** - Anyone can verify proofs cryptographically
 
 ## Quick Start
 
@@ -17,16 +17,26 @@ Cato executes Bitcoin Script in Cairo and generates STARK proofs verifiable on S
 # Build
 scarb build
 
-# Run tests (127 tests)
-scarb test
+# Run tests (20 tests)
+scarb cairo-test
 
-# Execute and generate proof
+# Execute Bitcoin Script
 scarb execute --print-program-output
+```
+
+## Generate & Verify Proof
+
+```bash
+# Build Stwo prover (first time only)
+git clone https://github.com/starkware-libs/stwo-cairo.git /tmp/stwo-cairo
+cd /tmp/stwo-cairo/cairo-prove && ./build.sh
+
+# Generate STARK proof
 /tmp/stwo-cairo/cairo-prove/target/release/cairo-prove prove \
     target/dev/cato.executable.json \
     proofs/cato_proof.json
 
-# Verify locally
+# Verify proof
 /tmp/stwo-cairo/cairo-prove/target/release/cairo-prove verify proofs/cato_proof.json
 ```
 
@@ -35,14 +45,14 @@ scarb execute --print-program-output
 ```
 ┌──────────────────┐    ┌─────────────────┐    ┌───────────────────┐
 │  Bitcoin Script  │───▶│    Cato VM      │───▶│   Stwo Prover     │
-│  (OP_CAT)        │    │    (Cairo)      │    │   (~7 seconds)    │
+│  (OP_CAT)        │    │    (Cairo)      │    │   (~8 seconds)    │
 └──────────────────┘    └─────────────────┘    └─────────┬─────────┘
                                                          │
                                                          ▼
-                        ┌─────────────────┐    ┌───────────────────┐
-                        │  CatoVerifier   │◀───│   FactRegistry    │
-                        │  (Starknet)     │    │   (Herodotus)     │
-                        └─────────────────┘    └───────────────────┘
+                                               ┌───────────────────┐
+                                               │   STARK Proof     │
+                                               │   (verifiable)    │
+                                               └───────────────────┘
 ```
 
 ## Supported Opcodes
@@ -57,40 +67,23 @@ scarb execute --print-program-output
 | Crypto | `OP_SHA256` `OP_CHECKSIG` `OP_CHECKSIGVERIFY` `OP_CHECKSIGADD` |
 | Timelock | `OP_CHECKLOCKTIMEVERIFY` `OP_CHECKSEQUENCEVERIFY` |
 
-## Contract Deployment
-
-| Network | Contract |
-|---------|----------|
-| Mainnet | [`0x016033...3617`](https://starkscan.co/contract/0x0160338e1ceb5a1e9e430484460a6b4bccaaa3a4b896a7f09980301a88603617) |
-| Sepolia | [`0x02c22b...71fe`](https://sepolia.starkscan.co/contract/0x02c22b1c1c09bf150f43d3207854f016677cf26cf560d9b34a3e6b019b3571fe) |
-
 ## Project Structure
 
 ```
 cato/
 ├── src/
-│   ├── lib.cairo       # Entry point with provable execution demo
+│   ├── lib.cairo       # Entry point with provable execution
 │   ├── vm.cairo        # Bitcoin Script VM
 │   ├── opcodes.cairo   # Opcode definitions
-│   ├── vault.cairo     # CatoVault recursive covenant
-│   └── tests.cairo     # Test suite (127 tests)
-├── contracts/
-│   └── src/verifier.cairo  # On-chain verifier
+│   └── tests.cairo     # Test suite (20 tests)
 └── proofs/             # Generated STARK proofs
-```
-
-## Building Stwo Prover
-
-```bash
-git clone https://github.com/starkware-libs/stwo-cairo.git /tmp/stwo-cairo
-cd /tmp/stwo-cairo/cairo-prove && ./build.sh
 ```
 
 ## Performance
 
 | Metric | Value |
 |--------|-------|
-| Proof Generation | ~7 seconds |
+| Proof Generation | ~8 seconds |
 | Proof Size | ~17 MB |
 | Max Stack Size | 1000 elements |
 | Max Element Size | 520 bytes |

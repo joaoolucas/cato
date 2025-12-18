@@ -1,9 +1,0 @@
-# Starknet Foundry configuration for CatoVerifier deployment
-
-[sncast.sepolia]
-url = "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/demo"
-account = "deployer"
-
-[sncast.mainnet]
-url = "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/demo"
-# account = "deployer"  # Uncomment and set your account name

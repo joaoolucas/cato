@@ -7,12 +7,10 @@ edition = "2024_07"
 cairo_execute = "2.14.0"
 
 [dev-dependencies]
-snforge_std = "0.38.0"
+cairo_test = "2.14.0"
 
 [executable]
 
 [cairo]
 enable-gas = false
 
-[scripts]
-test = "snforge test"
