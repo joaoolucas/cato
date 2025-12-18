@@ -1,0 +1,12 @@
+[package]
+name = "cato"
+version = "0.1.0"
+edition = "2024_07"
+
+[dependencies]
+
+[dev-dependencies]
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.38.0" }
+
+[scripts]
+test = "snforge test"
