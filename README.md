@@ -61,7 +61,8 @@ scarb execute --print-program-output
 
 | Network | Contract |
 |---------|----------|
-| Sepolia | [`0x02c22b1c...71fe`](https://sepolia.starkscan.co/contract/0x02c22b1c1c09bf150f43d3207854f016677cf26cf560d9b34a3e6b019b3571fe) |
+| Mainnet | [`0x016033...3617`](https://starkscan.co/contract/0x0160338e1ceb5a1e9e430484460a6b4bccaaa3a4b896a7f09980301a88603617) |
+| Sepolia | [`0x02c22b...71fe`](https://sepolia.starkscan.co/contract/0x02c22b1c1c09bf150f43d3207854f016677cf26cf560d9b34a3e6b019b3571fe) |
 
 ## Project Structure
 
