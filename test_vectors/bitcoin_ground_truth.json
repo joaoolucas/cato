@@ -1,0 +1,279 @@
+{
+  "description": "Bitcoin Script ground-truth test vectors with OP_CAT enabled",
+  "generated_by": "Bitcoin-compatible interpreter (generate_bitcoin_vectors.py)",
+  "constants": {
+    "MAX_SCRIPT_ELEMENT_SIZE": 520,
+    "MAX_STACK_SIZE": 1000
+  },
+  "opcodes": {
+    "OP_PUSH": "0x00 (followed by length byte and data)",
+    "OP_CAT": "0x7e",
+    "OP_ADD": "0x93",
+    "OP_DUP": "0x76",
+    "OP_DROP": "0x75",
+    "OP_EQUAL": "0x87",
+    "OP_VERIFY": "0x69"
+  },
+  "test_vectors": [
+    {
+      "name": "cat_hello_world",
+      "description": "Concatenate 'hello' and 'world'",
+      "initial_stack": [
+        "68656c6c6f",
+        "776f726c64"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "68656c6c6f776f726c64"
+      ]
+    },
+    {
+      "name": "cat_empty_left",
+      "description": "Empty string + 'abc'",
+      "initial_stack": [
+        "",
+        "616263"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "616263"
+      ]
+    },
+    {
+      "name": "cat_empty_right",
+      "description": "'abc' + empty string",
+      "initial_stack": [
+        "616263",
+        ""
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "616263"
+      ]
+    },
+    {
+      "name": "cat_both_empty",
+      "description": "Two empty strings",
+      "initial_stack": [
+        "",
+        ""
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        ""
+      ]
+    },
+    {
+      "name": "cat_binary_with_nulls",
+      "description": "Binary data with null bytes",
+      "initial_stack": [
+        "00ff00",
+        "ff00ff"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "00ff00ff00ff"
+      ]
+    },
+    {
+      "name": "cat_single_bytes",
+      "description": "Concatenate single bytes",
+      "initial_stack": [
+        "01",
+        "02"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "0102"
+      ]
+    },
+    {
+      "name": "cat_all_byte_values",
+      "description": "All 256 byte values preserved",
+      "initial_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f",
+        "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
+      ]
+    },
+    {
+      "name": "cat_max_size_520",
+      "description": "Maximum valid size 260+260=520",
+      "initial_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00010203",
+        "808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80818283"
+      ],
+      "script": "7e",
+      "expected_final_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00010203808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80818283"
+      ]
+    },
+    {
+      "name": "cat_exceeds_max_size",
+      "description": "Exceeds max: 261+261=522",
+      "initial_stack": [
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff0001020304",
+        "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff0001020304"
+      ],
+      "script": "7e",
+      "expected_error": "OP_CAT: result too large"
+    },
+    {
+      "name": "cat_underflow_empty",
+      "description": "OP_CAT with empty stack",
+      "initial_stack": [],
+      "script": "7e",
+      "expected_error": "OP_CAT: stack underflow"
+    },
+    {
+      "name": "cat_underflow_one",
+      "description": "OP_CAT with only one element",
+      "initial_stack": [
+        "deadbeef"
+      ],
+      "script": "7e",
+      "expected_error": "OP_CAT: stack underflow"
+    },
+    {
+      "name": "cat_chain_4_elements",
+      "description": "Chain: [a,b,c,d] with 3 CATs",
+      "initial_stack": [
+        "61",
+        "62",
+        "63",
+        "64"
+      ],
+      "script": "7e7e7e",
+      "expected_final_stack": [
+        "61626364"
+      ]
+    },
+    {
+      "name": "cat_with_dup",
+      "description": "DUP then CAT doubles string",
+      "initial_stack": [
+        "414243"
+      ],
+      "script": "767e",
+      "expected_final_stack": [
+        "414243414243"
+      ]
+    },
+    {
+      "name": "add_2_plus_3",
+      "description": "2 + 3 = 5",
+      "initial_stack": [
+        "02",
+        "03"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "05"
+      ]
+    },
+    {
+      "name": "add_zero_left",
+      "description": "0 + 42 = 42",
+      "initial_stack": [
+        "",
+        "2a"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "2a"
+      ]
+    },
+    {
+      "name": "add_negative",
+      "description": "-5 + 10 = 5",
+      "initial_stack": [
+        "85",
+        "0a"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "05"
+      ]
+    },
+    {
+      "name": "add_two_negatives",
+      "description": "-3 + -7 = -10",
+      "initial_stack": [
+        "83",
+        "87"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "8a"
+      ]
+    },
+    {
+      "name": "add_cancel_to_zero",
+      "description": "5 + -5 = 0",
+      "initial_stack": [
+        "05",
+        "85"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        ""
+      ]
+    },
+    {
+      "name": "add_127_plus_1",
+      "description": "127 + 1 = 128 (needs 2 bytes)",
+      "initial_stack": [
+        "7f",
+        "01"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "8000"
+      ]
+    },
+    {
+      "name": "add_256_plus_256",
+      "description": "256 + 256 = 512",
+      "initial_stack": [
+        "0001",
+        "0001"
+      ],
+      "script": "93",
+      "expected_final_stack": [
+        "0002"
+      ]
+    },
+    {
+      "name": "script_push_cat",
+      "description": "PUSH 'AB' PUSH 'CD' CAT",
+      "initial_stack": [],
+      "script": "00024142000243447e",
+      "expected_final_stack": [
+        "41424344"
+      ]
+    },
+    {
+      "name": "cat_verify_truthy",
+      "description": "CAT produces truthy, VERIFY passes",
+      "initial_stack": [
+        "01",
+        "02"
+      ],
+      "script": "7e69",
+      "expected_final_stack": []
+    },
+    {
+      "name": "cat_verify_falsy",
+      "description": "CAT of empties is falsy, VERIFY fails",
+      "initial_stack": [
+        "",
+        ""
+      ],
+      "script": "7e69",
+      "expected_error": "OP_VERIFY: failed"
+    }
+  ]
+}

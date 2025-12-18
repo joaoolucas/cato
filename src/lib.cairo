@@ -10,3 +10,6 @@ mod test_vectors;
 
 #[cfg(test)]
 mod test_fuzzing;
+
+#[cfg(test)]
+mod test_bitcoin_ground_truth;
